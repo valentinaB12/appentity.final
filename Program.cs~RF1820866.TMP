@@ -1,0 +1,211 @@
+﻿using MiNET.Utils.Skins;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Linq;
+using appEntity1.Modelo;
+
+namespace appEntity1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+
+        }
+            static void ListarEstudiantes()
+            {
+
+                Console.Clear();
+                 Console.SetCursorPosition(5, 5); Console.WriteLine("LISTA DE ESTUDIANTES");
+                var db = new tallersenaContext();
+                var listaEstudiantes = db.Estudiante.ToList();
+                Console.WriteLine($"NOMBRE\tCORREO");
+                foreach (var MyEstudiante in listaEstudiantes)
+                {
+                    Console.WriteLine("{myEstudiante.Codigo}\t{myEstudiante.Nombre}\t{myEstudiante.Correo}\t{myEstudiante.Nota1}\t{myEstudiante.Nota2}\t{myEstudiante.Nota3}");
+                    
+                }
+                Console.ReadKey();
+            }
+                static void AgregarEstudiante()
+                {
+                    var db = new tallersenaContext();
+                    Console.Clear();
+                    Console.SetCursorPosition(5, 5); Console.WriteLine("AGREGAR ESTUDIANTE");
+                    Console.SetCursorPosition(5, 7); Console.WriteLine("Ingresar Codigo:");
+                    Console.SetCursorPosition(5, 8); Console.WriteLine("Ingresar Nombre:");
+                    Console.SetCursorPosition(5, 9); Console.WriteLine("Ingresar Correo:");
+                    Console.SetCursorPosition(5, 10); Console.WriteLine("Ingresar Nota 1:");
+                    Console.SetCursorPosition(5, 11); Console.WriteLine("Ingresar Nota 2:");
+                    Console.SetCursorPosition(5, 12); Console.WriteLine("Ingresar Nota 3:");
+
+                    Console.SetCursorPosition(20, 7); int cod = int.Parse(Console.ReadLine());
+                    var existe = db.Estudiante.Find(cod);
+                    if (existe == null)
+                    {
+
+                        Console.SetCursorPosition(20, 8); string nom = Console.ReadLine();
+                        Console.SetCursorPosition(20, 9); string cor = Console.ReadLine();
+                        Console.SetCursorPosition(20, 10); int not1 = int.Parse(Console.ReadLine());
+                        Console.SetCursorPosition(20, 11); int not2 = int.Parse(Console.ReadLine());
+                        Console.SetCursorPosition(20, 12); int not3 = int.Parse(Console.ReadLine());
+
+
+                        Estudiante MyEstudiante = new Estudiante
+                        {
+                            Codigo = cod,
+                            Nombre = nom,
+                            Correo = cor,
+                            Nota1 = not1,
+                            Nota2 = not2,
+                            Nota3 = not3,
+
+                        };
+                        db.Estudiante.Add(MyEstudiante);
+                        db.SaveChanges();
+                        Console.SetCursorPosition(5, 30); Console.WriteLine("EL ESTUDIANTE INGRESO EXITOSAMENTE ");
+                    }
+                    else
+                    {
+                        Console.SetCursorPosition(5, 30); Console.WriteLine("EL CODIGO YA EXISTE");
+                        Console.ReadKey();
+                    }
+                }
+
+        static void BuscarEstudiante()
+        {
+            var db = new tallersenaContext();
+            Console.Clear();
+            Console.SetCursorPosition(5, 5); Console.WriteLine("BUSCAR ESTUDIANTE");
+            Console.SetCursorPosition(5, 7); Console.WriteLine("Digite el codigo del estudiante a buscar:");
+            int cod = int.Parse(Console.ReadLine());
+            var existe = db.Estudiante.Find(cod);
+            if (existe != null)
+            {
+                var myEstudiante = db.Estudiante.FirstOrDefault(e => e.Codigo == cod);
+                
+
+                Console.SetCursorPosition(5, 30); Console.WriteLine("LA BUSQUEDA DEL ESTUDIANTE FUE EXITOSA ");
+            }
+            else
+            {
+                Console.SetCursorPosition(5, 30); Console.WriteLine("EL CODIGO NO EXITE EN LA BASE DE DATOS");
+
+                Console.ReadKey();
+
+            }
+        }
+        static void EditarEstudiante()
+        {
+            var db = new tallersenaContext();
+            Console.Clear();
+            Console.SetCursorPosition(5, 5); Console.WriteLine("EDITAR ESTUDIANTE");
+            Console.SetCursorPosition(5, 6); Console.WriteLine("Digite el codigo del estudiante a editar:");
+            int cod = int.Parse(Console.ReadLine());
+            var existe = db.Estudiante.Find(cod);
+            if (existe != null)
+            {
+                var myEstudiante = db.Estudiante.FirstOrDefault(e => e.Codigo == cod);
+                Console.SetCursorPosition(5, 7); Console.WriteLine(myEstudiante.Codigo);
+                Console.SetCursorPosition(5, 8); Console.WriteLine(myEstudiante.Nombre);
+                Console.SetCursorPosition(5, 9); Console.WriteLine(myEstudiante.Correo);
+                Console.SetCursorPosition(5, 10); Console.WriteLine(myEstudiante.Nota1);
+                Console.SetCursorPosition(5, 11); Console.WriteLine(myEstudiante.Nota2);
+                Console.SetCursorPosition(5, 12); Console.WriteLine(myEstudiante.Nota3);
+
+                
+                Console.SetCursorPosition(35, 8); string nom = Console.ReadLine();
+                Console.SetCursorPosition(35, 9); string cor = Console.ReadLine();
+                Console.SetCursorPosition(35, 10); int not1 = int.Parse(Console.ReadLine());
+                Console.SetCursorPosition(35, 11); int not2 = int.Parse(Console.ReadLine());
+                Console.SetCursorPosition(35, 12); int not3 = int.Parse(Console.ReadLine());
+
+                myEstudiante.Nombre = nom;
+                myEstudiante.Correo = cor;
+                myEstudiante.Nota1 = not1;
+                myEstudiante.Nota2 = not2;
+                myEstudiante.Nota3 = not3;
+                db.SaveChanges();
+
+
+                Console.SetCursorPosition(5, 30); Console.SetCursorPosition(5, 30); Console.WriteLine("LOS DATOS DEL ESTUDIANTE FUERON ACTUALIZADOS  EXITOSAMENTE ");
+            }
+            else
+            {
+                Console.SetCursorPosition(5, 30); Console.WriteLine("EL CODIGO NO EXITE EN LA BASE DE DATOS");
+
+                Console.ReadKey();
+
+            }
+        }
+
+        static void BorrarEstudiante()
+        {
+            var db = new tallersenaContext();
+            Console.Clear();
+            Console.SetCursorPosition(5, 5); Console.WriteLine("BORRAR ESTUDIANTE");
+            Console.SetCursorPosition(5, 7); Console.WriteLine("Digite el codigo del estudiante a borrar:");
+            int cod = int.Parse(Console.ReadLine());
+            var existe = db.Estudiante.Find(cod);
+            if (existe != null)
+            {
+                var myEstudiante = db.Estudiante.FirstOrDefault(e => e.Codigo == cod);
+                string confirmar = "n";
+                Console.WriteLine($"esta seguro que desea borrar el estudiante{myEstudiante.Nombre}s/n");
+                   if    (confirmar == "s")
+                   {
+                    db.Estudiante.Remove(myEstudiante);
+                    db.SaveChanges();
+
+                    Console.SetCursorPosition(5, 30); Console.WriteLine(" EL ESTUDIANTE FUE BORRADO EXITOSAMENTE ");
+                   }
+                else 
+                {
+                    Console.SetCursorPosition(5, 30); Console.WriteLine ("SE CANCELO LA ELIMINACION DEL ESTUDIANTE");
+                }
+            
+            }       
+             else   
+             {             
+                   Console.SetCursorPosition(5, 30); Console.WriteLine("EL ESTUDIANTE NO EXITE EN LA BASE DE DATOS");
+
+                  Console.ReadKey();
+
+             }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+}
